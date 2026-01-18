@@ -51,7 +51,7 @@ struct Player
 };
 
 // printing
-char colorToChar(Color c) 
+char colorToChar(Color c)
 {
 	if (c == RED) return 'R';
 	if (c == GREEN) return 'G';
@@ -62,7 +62,7 @@ char colorToChar(Color c)
 
 void printCard(const Card& c)
 {
-	if (c.color == WILD) 
+	if (c.color == WILD)
 	{
 		if (c.value == WILD_CARD) std::cout << "Wild";
 		else if (c.value == WILD_PLUS4) std::cout << "Wild+4";
@@ -79,7 +79,7 @@ void printCard(const Card& c)
 }
 
 // rules
-bool isValidMove(const Card& played, const Card& topCard, Color activeColor) 
+bool isValidMove(const Card& played, const Card& topCard, Color activeColor)
 {
 	if (played.color == WILD) return true;
 	if (played.color == activeColor) return true;
@@ -87,9 +87,9 @@ bool isValidMove(const Card& played, const Card& topCard, Color activeColor)
 	return false;
 }
 
-bool hasAnyValidMove(const Player& p, const Card& topCard, Color activeColor) 
+bool hasAnyValidMove(const Player& p, const Card& topCard, Color activeColor)
 {
-	for (int i = 0; i < p.cardCount; i++) 
+	for (int i = 0; i < p.cardCount; i++)
 	{
 		if (isValidMove(p.hand[i], topCard, activeColor)) return true;
 	}
@@ -97,12 +97,12 @@ bool hasAnyValidMove(const Player& p, const Card& topCard, Color activeColor)
 }
 
 // hand operations
-void addToHand(Player& p, const Card& c) 
+void addToHand(Player& p, const Card& c)
 {
 	p.hand[p.cardCount++] = c;
 }
 
-void removeCard(Player& p, int index) 
+void removeCard(Player& p, int index)
 {
 	for (int i = index; i < p.cardCount - 1; i++)
 	{
@@ -112,21 +112,21 @@ void removeCard(Player& p, int index)
 }
 
 // deck building (108 cards)
-void pushCard(Card deck[], int& deckSize, Color color, Value value) 
+void pushCard(Card deck[], int& deckSize, Color color, Value value)
 {
 	deck[deckSize].color = color;
 	deck[deckSize].value = value;
 	deckSize++;
 }
 
-void buildUnoDeck(Card deck[], int& deckSize) 
+void buildUnoDeck(Card deck[], int& deckSize)
 {
 	deckSize = 0;
 
 	// for each color: 1x0, 2x(1-9), 2xSkip, 2xReverse, 2x+2, 1xWild, 1xWild+4
 	Color colors[4] = { RED, GREEN, BLUE, YELLOW };
 
-	for (int ci = 0; ci < 4; ci++) 
+	for (int ci = 0; ci < 4; ci++)
 	{
 		Color c = colors[ci];
 
@@ -134,7 +134,7 @@ void buildUnoDeck(Card deck[], int& deckSize)
 		pushCard(deck, deckSize, c, ZERO);
 
 		// two of 1-9
-		for (Value v = ONE; v <= NINE; v = (Value)((int)v + 1)) 
+		for (Value v = ONE; v <= NINE; v = (Value)((int)v + 1))
 		{
 			pushCard(deck, deckSize, c, v);
 			pushCard(deck, deckSize, c, v);
@@ -156,7 +156,8 @@ void buildUnoDeck(Card deck[], int& deckSize)
 	}
 }
 
-void shuffleDeck(Card deck[], int deckSize) {
+void shuffleDeck(Card deck[], int deckSize)
+{
 	// Allowed: <algorithm> + <random>
 	unsigned seed = (unsigned)time(0);
 	std::default_random_engine rng(seed);
@@ -164,18 +165,35 @@ void shuffleDeck(Card deck[], int deckSize) {
 }
 
 // We treat deck as a stack: draw from the end
-bool drawFromDeck(Card deck[], int& deckSize, Card& outCard) {
+bool drawFromDeck(Card deck[], int& deckSize, Card& outCard)
+{
 	if (deckSize <= 0) return false;
 	outCard = deck[deckSize - 1];
 	deckSize--;
 	return true;
 }
 
+// input validation for number of players
+void playersCountInput(int& playersCount)
+{
+	bool playersCondition = playersCount >= MIN_PLAYERS && playersCount <= MAX_PLAYERS;
+	do
+	{
+		std::cout << "Enter number of players (" << MIN_PLAYERS << "-" << MAX_PLAYERS << "): ";
+			std::cin >> playersCount;
+		playersCondition = playersCount >= MIN_PLAYERS && playersCount <= MAX_PLAYERS;
+		if (!playersCondition)
+		{
+			std::cout << "Invalid number of players. Please try again." << std::endl;
+		}
+	} while (!playersCondition);
+}
+
 int main()
 {
 	srand((unsigned)time(0));
-	
-	//defining cards, decks and players by using global structures
+
+	// defining cards, decks and players by using global structures
 	Card deck[MAX_CARDS_IN_DECK];
 	int deckSize = 0;
 
@@ -187,9 +205,9 @@ int main()
 	int currentPlayer = 0;
 	int direction = 1;
 
+	// interface title
 	std::cout << "--- UNO ---" << std::endl;
 
-	// Input number of players with validation
 	playersCountInput(playersCount);
 
 	return 0;
